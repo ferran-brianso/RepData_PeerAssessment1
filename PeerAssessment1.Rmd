@@ -9,10 +9,37 @@ output:
 
 ## General settings and library loadings
 
+```{r}
+echo = TRUE
+library(ggplot2)
+```
 
 
 ## Loading and preprocessing the data
 
+unzip and load csv file
+```{r}
+unzip("activity.zip")
+data <- read.csv("activity.csv", header = TRUE)
+```
+
+preprocess some fields and review the data
+```{r}
+data$interval <- as.factor(data$interval)
+data$date <- as.Date(data$date)
+head(data)
+tail(data)
+dim(data)
+```
+
+subset those cases without NA
+```{r}
+data.woNA <- na.omit(data)
+rownames(data.woNA) <- 1:nrow(data.woNA)
+head(data.woNA)
+tail(data.woNA)
+dim(data.woNA)
+```
 
 
 ## What is mean total number of steps taken per day?
