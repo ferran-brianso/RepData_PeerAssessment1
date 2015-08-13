@@ -1,9 +1,14 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
+author: "Ferran Brianso (ferran.brianso@vhir.org)"
+date: "13/08/2015"
 output: 
   html_document:
     keep_md: true
 ---
+
+## General settings and library loadings
+
 
 
 ## Loading and preprocessing the data
@@ -23,3 +28,6 @@ output:
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+
+
