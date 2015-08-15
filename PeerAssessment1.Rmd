@@ -19,7 +19,7 @@ library(ggplot2)
 Unzip and load csv file
 ```{r}
 unzip("activity.zip")
-data <- read.csv("activity.csv", header = TRUE)
+data <- read.csv("activity.csv", header=TRUE)
 ```
 
 Preprocess some fields and review the data
@@ -46,14 +46,14 @@ Using data set without NAs for this part of the assignment.
 
 Calculate the total number of steps taken per day
 ```{r}
-steps.per.day <- aggregate(data.woNA$steps, list(Date = data.woNA$date), FUN = "sum")
+steps.per.day <- aggregate(data.woNA$steps, list(Date=data.woNA$date), FUN="sum")
 head(steps.per.day)
 tail(steps.per.day)
 ```
 
 Make a histogram of the total number of steps taken each day
 ```{r}
-hist(steps.per.day$x, breaks=(length(steps.per.day$x)/3), col="darkgreen",
+hist(steps.per.day$x, breaks=(length(steps.per.day$x)/3), col="orange",
      main="Histogram of steps per day", xlab="Steps per day")
 ```
 
@@ -67,6 +67,17 @@ median(steps.per.day$x)
 
 Time series plot of the 5-minute interval and the average number of steps taken, averaged across all days
 
+```{r}
+avg.steps <- aggregate(data.woNA$steps, list(interval=as.numeric(data.woNA$interval)), FUN="mean")
+names(avg.steps)[2] <- "avgSteps"
+ggplot(avg.steps, aes(interval, avgSteps)) + geom_line(color="orange") + labs(title="Time series plot of the average steps taken per 5-minute interval", x="Intervals", y="Average Number of Steps")
+```
+
+Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
+```{r}
+avg.steps[which(avg.steps$avgSteps==max(avg.steps$avgSteps)), ]
+```
 
 ## Imputing missing values
 
