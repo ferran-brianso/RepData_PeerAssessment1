@@ -14,16 +14,15 @@ echo = TRUE
 library(ggplot2)
 ```
 
-
 ## Loading and preprocessing the data
 
-unzip and load csv file
+Unzip and load csv file
 ```{r}
 unzip("activity.zip")
 data <- read.csv("activity.csv", header = TRUE)
 ```
 
-preprocess some fields and review the data
+Preprocess some fields and review the data
 ```{r}
 data$interval <- as.factor(data$interval)
 data$date <- as.Date(data$date)
@@ -32,7 +31,7 @@ tail(data)
 dim(data)
 ```
 
-subset those cases without NA
+Subset those cases without NA
 ```{r}
 data.woNA <- na.omit(data)
 rownames(data.woNA) <- 1:nrow(data.woNA)
@@ -41,13 +40,32 @@ tail(data.woNA)
 dim(data.woNA)
 ```
 
-
 ## What is mean total number of steps taken per day?
 
+Using data set without NAs for this part of the assignment.
 
+Calculate the total number of steps taken per day
+```{r}
+steps.per.day <- aggregate(data.woNA$steps, list(Date = data.woNA$date), FUN = "sum")
+head(steps.per.day)
+tail(steps.per.day)
+```
+
+Make a histogram of the total number of steps taken each day
+```{r}
+hist(steps.per.day$x, breaks=(length(steps.per.day$x)/3), col="darkgreen",
+     main="Histogram of steps per day", xlab="Steps per day")
+```
+
+Calculate and report the mean and median of the total number of steps taken per day
+```{r}
+mean(steps.per.day$x)
+median(steps.per.day$x)
+```
 
 ## What is the average daily activity pattern?
 
+Time series plot of the 5-minute interval and the average number of steps taken, averaged across all days
 
 
 ## Imputing missing values
@@ -55,6 +73,4 @@ dim(data.woNA)
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
-
-
 
