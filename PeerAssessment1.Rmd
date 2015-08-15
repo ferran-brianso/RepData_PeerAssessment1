@@ -147,7 +147,6 @@ Using the dataset with the filled-in missing values for this part.
 
 ### Create a new factor variable in the dataset with two levels – “weekday” and “weekend” - indicating whether a given date is a weekday or weekend day.
 ```{r}
-head(data.filled)
 data.filled$weekdays <- factor(format(data.filled$date, "%A"))
 levels(data.filled$weekdays)
 table(data.filled$weekdays)
@@ -159,3 +158,21 @@ table(data.filled$weekdays)
 
 ### Make a panel plot containing a time series plot of the 5-minute interval and the average number of steps taken, averaged across all weekday days or weekend days.
 
+Adapting the data frame with average steps
+```{r}
+avg.steps <- aggregate(data.filled$steps, 
+                      list(interval = as.numeric(as.character(data.filled$interval)), 
+                           weekdays = data.filled$weekdays),
+                      FUN = "mean")
+names(avg.steps)[3] <- "avgNumOfSteps"
+```
+
+Creating the final plot
+```{r}
+library(lattice)
+xyplot(avg.steps$avgNumOfSteps ~ avg.steps$interval | avg.steps$weekdays, 
+       type = "l", layout = c(1, 2), 
+       xlab = "Interval", ylab = "Number of steps")
+```
+
+Yes, there are differences in activity patterns between weekdays and weekends along the time intervals. For instance, the number of steps on weekends is more regular than on weekdays, where there is a spike of more activity around time-interval 800.
