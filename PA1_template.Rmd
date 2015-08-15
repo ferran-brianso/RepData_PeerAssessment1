@@ -1,7 +1,7 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
 author: "Ferran Brianso (ferran.brianso@vhir.org)"
-date: "13/08/2015"
+date: "14/08/2015"
 output: 
   html_document:
     keep_md: true
@@ -11,6 +11,7 @@ output:
 
 ```{r}
 library(ggplot2)
+library(lattice)
 echo = TRUE                        # to show all code
 Sys.setlocale("LC_TIME", "C")      # to manage weekdays in english
 ```
@@ -69,6 +70,7 @@ median(steps.per.day$x)
 
 ### Time series plot of the 5-minute interval and the average number of steps taken, averaged across all days
 ```{r}
+require(ggplot2)
 avg.steps <- aggregate(data.woNA$steps, list(interval=as.numeric(data.woNA$interval)), FUN="mean")
 names(avg.steps)[2] <- "avgSteps"
 ggplot(avg.steps, aes(interval, avgSteps)) + geom_line(color="orange") + labs(title="Time series plot of the average steps taken per 5-minute interval", x="Intervals", y="Average Number of Steps")
@@ -169,7 +171,7 @@ names(avg.steps)[3] <- "avgNumOfSteps"
 
 Creating the final plot
 ```{r}
-library(lattice)
+require(lattice)
 xyplot(avg.steps$avgNumOfSteps ~ avg.steps$interval | avg.steps$weekdays, 
        type = "l", layout = c(1, 2), 
        xlab = "Interval", ylab = "Number of steps")
