@@ -1,12 +1,13 @@
 # Reproducible Research: Peer Assessment 1
 Ferran Brianso (ferran.brianso@vhir.org)  
-13/08/2015  
+14/08/2015  
 
 ## General settings and library loadings
 
 
 ```r
 library(ggplot2)
+library(lattice)
 echo = TRUE                        # to show all code
 Sys.setlocale("LC_TIME", "C")      # to manage weekdays in english
 ```
@@ -147,7 +148,7 @@ hist(steps.per.day$x, breaks=(length(steps.per.day$x)), col="orange",
 box()
 ```
 
-![](PeerAssessment1_files/figure-html/unnamed-chunk-6-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
 
 ### Calculate and report the mean and median of the total number of steps taken per day
 
@@ -172,12 +173,13 @@ median(steps.per.day$x)
 ### Time series plot of the 5-minute interval and the average number of steps taken, averaged across all days
 
 ```r
+require(ggplot2)
 avg.steps <- aggregate(data.woNA$steps, list(interval=as.numeric(data.woNA$interval)), FUN="mean")
 names(avg.steps)[2] <- "avgSteps"
 ggplot(avg.steps, aes(interval, avgSteps)) + geom_line(color="orange") + labs(title="Time series plot of the average steps taken per 5-minute interval", x="Intervals", y="Average Number of Steps")
 ```
 
-![](PeerAssessment1_files/figure-html/unnamed-chunk-8-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png) 
 
 ### Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
@@ -272,7 +274,7 @@ hist(steps.per.day.filled$x, breaks=(length(steps.per.day$x)), col="steelblue",
 box()
 ```
 
-![](PeerAssessment1_files/figure-html/unnamed-chunk-12-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-12-1.png) 
 
 ```r
 mean(steps.per.day.filled$x)
@@ -355,7 +357,7 @@ legend(17000, 14, c("Removed NAs","Imputed data"), cex=0.7,
 box()
 ```
 
-![](PeerAssessment1_files/figure-html/unnamed-chunk-15-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-15-1.png) 
 
 Where it is clear that only the break that includes the mean value becomes much more frequent in case of the imputed data set.
 
@@ -413,12 +415,12 @@ names(avg.steps)[3] <- "avgNumOfSteps"
 Creating the final plot
 
 ```r
-library(lattice)
+require(lattice)
 xyplot(avg.steps$avgNumOfSteps ~ avg.steps$interval | avg.steps$weekdays, 
        type = "l", layout = c(1, 2), 
        xlab = "Interval", ylab = "Number of steps")
 ```
 
-![](PeerAssessment1_files/figure-html/unnamed-chunk-18-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-18-1.png) 
 
 Yes, there are differences in activity patterns between weekdays and weekends along the time intervals. For instance, the number of steps on weekends is more regular than on weekdays, where there is a spike of more activity around time-interval 800.
