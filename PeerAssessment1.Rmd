@@ -10,8 +10,9 @@ output:
 ## General settings and library loadings
 
 ```{r}
-echo = TRUE
 library(ggplot2)
+echo = TRUE                        # to show all code
+Sys.setlocale("LC_TIME", "C")      # to manage weekdays in english
 ```
 
 ## Loading and preprocessing the data
@@ -139,4 +140,22 @@ box()
 ```
 
 Where it is clear that only the break that includes the mean value becomes much more frequent in case of the imputed data set.
+
+
+## Are there differences in activity patterns between weekdays and weekends?
+Using the dataset with the filled-in missing values for this part.
+
+### Create a new factor variable in the dataset with two levels – “weekday” and “weekend” - indicating whether a given date is a weekday or weekend day.
+```{r}
+head(data.filled)
+data.filled$weekdays <- factor(format(data.filled$date, "%A"))
+levels(data.filled$weekdays)
+table(data.filled$weekdays)
+levels(data.filled$weekdays) <- list(weekday = c("Monday", "Tuesday", "Wednesday", 
+                                                 "Thursday", "Friday"),
+                                     weekend = c("Saturday", "Sunday"))
+table(data.filled$weekdays)
+```
+
+### Make a panel plot containing a time series plot of the 5-minute interval and the average number of steps taken, averaged across all weekday days or weekend days.
 
