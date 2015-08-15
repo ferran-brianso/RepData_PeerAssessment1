@@ -44,20 +44,21 @@ dim(data.woNA)
 
 Using data set without NAs for this part of the assignment.
 
-Calculate the total number of steps taken per day
+### Calculate the total number of steps taken per day
 ```{r}
 steps.per.day <- aggregate(data.woNA$steps, list(Date=data.woNA$date), FUN="sum")
 head(steps.per.day)
 tail(steps.per.day)
 ```
 
-Make a histogram of the total number of steps taken each day
+### Make a histogram of the total number of steps taken each day
 ```{r}
-hist(steps.per.day$x, breaks=(length(steps.per.day$x)/3), col="orange",
+hist(steps.per.day$x, breaks=(length(steps.per.day$x)), col="orange",
      main="Histogram of steps per day", xlab="Steps per day")
+box()
 ```
 
-Calculate and report the mean and median of the total number of steps taken per day
+### Calculate and report the mean and median of the total number of steps taken per day
 ```{r}
 mean(steps.per.day$x)
 median(steps.per.day$x)
@@ -65,43 +66,77 @@ median(steps.per.day$x)
 
 ## What is the average daily activity pattern?
 
-Time series plot of the 5-minute interval and the average number of steps taken, averaged across all days
+### Time series plot of the 5-minute interval and the average number of steps taken, averaged across all days
 ```{r}
 avg.steps <- aggregate(data.woNA$steps, list(interval=as.numeric(data.woNA$interval)), FUN="mean")
 names(avg.steps)[2] <- "avgSteps"
 ggplot(avg.steps, aes(interval, avgSteps)) + geom_line(color="orange") + labs(title="Time series plot of the average steps taken per 5-minute interval", x="Intervals", y="Average Number of Steps")
 ```
 
-Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+### Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 ```{r}
 avg.steps[which(avg.steps$avgSteps==max(avg.steps$avgSteps)), ]
 ```
 
 ## Imputing missing values
 
-Calculate and report the total number of missing values in the dataset
+### Calculate and report the total number of missing values in the dataset
 ```{r}
 sum(is.na(data))
 ```
 
-Create a new dataset that is equal to the original dataset but with the missing data filled in.  
+### Create a new dataset that is equal to the original dataset but with the missing data filled in.  
 
-In this case, the mean for the corresponding 5-minute interval (already stored in avg.steps) has been used to fill each NA steps value.
+In this case, the mean for the corresponding 5-minute interval (already stored in avg.steps) has been used to fill each NA steps value, rounding the values.
 ```{r}
 data.filled <- data
 head(data.filled)
 head(avg.steps)
 for (i in 1:nrow(data.filled)) {
-      if (is.na(data.filled$steps[i])) {
-            interv <- as.numeric(data.filled$interval[i])
-            data.filled$steps[i] <- avg.steps[which(avg.steps$interval == interv), ]$avgSteps
-      }
+   if (is.na(data.filled$steps[i])) {
+      interv <- as.numeric(data.filled$interval[i])
+      data.filled$steps[i] <- as.integer(round(avg.steps[which(avg.steps$interval == interv), ]$avgSteps),0)
+   }
 }
 head(data.filled)
 sum(is.na(data.filled))
 ```
 
-Make a histogram of the total number of steps taken each day and calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+### Make a histogram of the total number of steps taken each day and calculate and report the mean and median total number of steps taken per day. 
+```{r}
+steps.per.day.filled <- aggregate(data.filled$steps, list(Date=data.filled$date), FUN="sum")
+hist(steps.per.day.filled$x, breaks=(length(steps.per.day$x)), col="steelblue",
+     main="Histogram of steps per day \n(missing values imputed)", xlab="Steps per day")
+box()
+mean(steps.per.day.filled$x)
+median(steps.per.day.filled$x)
+```
 
+### Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+```{r}
+mean(steps.per.day.filled$x)
+mean(steps.per.day$x)
+median(steps.per.day.filled$x)
+median(steps.per.day$x)
+```
+Yes, the values are slightly different.
+```{r}
+mean(steps.per.day.filled$x) - mean(steps.per.day$x)
+median(steps.per.day.filled$x) - median(steps.per.day$x)
+```
+Not so much in case of the means (just the slight effect of rounding values before imputing NAs), and a little bit more in case of medians (due to the fact of using a mean-based method for imputation).
 
-## Are there differences in activity patterns between weekdays and weekends?
+The overall differences can be observed with this plot of overlapped histograms
+```{r}
+hist(steps.per.day.filled$x, breaks=(length(steps.per.day$x)), col=rgb(0, 0.2, 1, 0.5), 
+     main="Histogram of steps per day \n(overlapped methods 'with' and 'without' NAs)", 
+     ylim=c(0, 15), xlab="Steps per day")
+hist(steps.per.day$x, breaks=(length(steps.per.day$x)), col=rgb(1, 0.7, 0, 0.7), 
+     add=TRUE)
+legend(17000, 14, c("Removed NAs","Imputed data"), cex=0.7,
+       col=c("orange","steelblue"), pch=c(15,15))
+box()
+```
+
+Where it is clear that only the break that includes the mean value becomes much more frequent in case of the imputed data set.
+
